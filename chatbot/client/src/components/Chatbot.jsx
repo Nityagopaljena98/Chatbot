@@ -1,25 +1,21 @@
 import { useState } from 'react';
-import { FaRobot, FaPlus } from 'react-icons/fa';
+import { FaRobot, FaPlus, FaPaperPlane } from 'react-icons/fa';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// import gemini api key from .env file
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
- 
-  const genAI = new GoogleGenerativeAI(API_KEY);  // Interact with the gemini model API
+  const genAI = new GoogleGenerativeAI(API_KEY);
 
   const fetchGeminiResponse = async (userMessage) => {
     try {
       const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
       const result = await model.generateContent(userMessage);
       const aiMessage = result.response.candidates[0].content.parts[0].text;
-
       setMessages((prevMessages) => [...prevMessages, { text: aiMessage, sender: 'bot' }]);
     } catch (error) {
       console.error('Gemini API Error:', error);
@@ -31,11 +27,9 @@ const Chatbot = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
     const newMessage = { text: input, sender: 'user' };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInput('');
-
     setLoading(true);
     await fetchGeminiResponse(input);
   };
@@ -46,51 +40,53 @@ const Chatbot = () => {
     }
   };
 
-  // start a new chat
   const startNewChat = () => {
     setMessages([]);
     setInput('');
   };
 
   return (
-    <div className='flex justify-center items-center min-h-screen '>
-      <div className='w-full max-w-3xl h-[600px] bg-white border border-gray-300 rounded-lg shadow-lg flex flex-col'>
-        <div className='bg-blue-500 text-white text-lg font-semibold p-4 rounded-t-lg flex items-center'>
-          <FaRobot className='mr-2 text-xl' />
-          Chatbot
+    <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+      <div className='w-full max-w-3xl h-[600px] bg-white border border-gray-300 rounded-2xl shadow-xl flex flex-col overflow-hidden'>
+        <div className='bg-gradient-to-r from-green-400 to-blue-500 text-white text-lg font-semibold p-4 flex items-center justify-between'>
+          <div className='flex items-center'>
+            <FaRobot className='mr-2 text-2xl' /> Chatbot
+          </div>
+          <button onClick={startNewChat} title='New Chat' className='p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition'>
+            <FaPlus />
+          </button>
         </div>
 
-        <div className='flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50'>
+        <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50'>
           {messages.length === 0 ? (
-            <p className='text-center text-gray-800'>Start the conversation ...</p>
+            <p className='text-center text-gray-500'>Start the conversation...</p>
           ) : (
             messages.map((msg, index) => (
-              <div key={index} className={`p-3 max-w-xs rounded-lg ${msg.sender === 'user' ? 'bg-blue-500 text-white self-end ml-auto' : 'bg-gray-300 text-black self-start'}`}>
-                {msg.text}
+              <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}> 
+                <div className={`p-3 max-w-full w-fit rounded-2xl text-white shadow-md ${msg.sender === 'user' ? 'bg-blue-500' : 'bg-gray-600 text-black'}`}> 
+                  {msg.text} 
+                </div>
               </div>
             ))
           )}
-          {loading && <p className='text-gray-500'>Thinking...</p>}
+          {loading && <p className='text-gray-500 '>Thinking...</p>}
         </div>
 
-        <div className='p-4 bg-white border-t flex items-center gap-2'>
-        <input
+        <div className='p-4 bg-white border-t flex items-center gap-3'>
+        <div className='flex-1 relative'>
+            <input
               type='text'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              className='w-full border-none bg-gray-800 p-4 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none  focus:border-transparent shadow-sm transition disabled:opacity-50 rounded-tl-lg rounded-tr-lg'
-              placeholder='Message Chatbot...'
+              className='w-full border border-gray-300 p-4 pr-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white shadow-sm'
+              placeholder='Send a message...'
               disabled={loading}
             />
-
-          <button onClick={startNewChat} title='New Chat' className='bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition'>
-            <FaPlus />
-          </button>
-
-          <button onClick={sendMessage} className='ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50' disabled={loading}>
-            {loading ? 'Sending...' : 'Send'}
-          </button>
+            <button onClick={sendMessage} className='absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-600 transition disabled:opacity-50' disabled={loading}>
+              <FaPaperPlane className='text-xl' />
+            </button>
+          </div>
         </div>
       </div>
     </div>
