@@ -15,7 +15,7 @@ const Chatbot = () => {
     try {
       const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
       const result = await model.generateContent(userMessage);
-      const aiMessage = result.response.candidates[0].content.parts[0].text;
+      const aiMessage = result.response.candidates[0].content.parts[0].text.replace(/\*/g, ''); // Remove * symbols
       setMessages((prevMessages) => [...prevMessages, { text: aiMessage, sender: 'bot' }]);
     } catch (error) {
       console.error('Gemini API Error:', error);
