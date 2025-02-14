@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaRobot, FaPlus, FaPaperPlane } from 'react-icons/fa';
+import { FaRobot, FaPlus, FaPaperPlane, FaMoon, FaSun } from 'react-icons/fa';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -8,6 +8,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -45,25 +46,34 @@ const Chatbot = () => {
     setInput('');
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
+
   return (
-    <div className='flex justify-center items-center min-h-screen bg-gray-100'>
-      <div className='w-full max-w-3xl h-[600px] bg-white border border-gray-300 rounded-2xl shadow-xl flex flex-col overflow-hidden'>
+    <div className={`flex justify-center items-center min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-200 text-black'}`}>
+      <div className={`w-full max-w-4xl h-[600px] ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} border border-gray-300 rounded-2xl shadow-xl flex flex-col overflow-hidden`}>
         <div className='bg-gradient-to-r from-green-400 to-blue-500 text-white text-lg font-semibold p-4 flex items-center justify-between'>
           <div className='flex items-center'>
             <FaRobot className='mr-2 text-2xl' /> Chatbot
           </div>
-          <button onClick={startNewChat} title='New Chat' className='p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition'>
-            <FaPlus />
-          </button>
+          <div className='flex items-center gap-3'>
+            <button onClick={toggleDarkMode} title='Toggle Dark Mode' className='p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition'>
+              {darkMode ? <FaSun /> : <FaMoon />}
+            </button>
+            <button onClick={startNewChat} title='New Chat' className='p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40 transition'>
+              <FaPlus />
+            </button>
+          </div>
         </div>
 
-        <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50'>
+        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
           {messages.length === 0 ? (
-            <p className='text-center text-gray-500'>Start the conversation...</p>
+            <p className={`text-center ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Start the conversation...</p>
           ) : (
             messages.map((msg, index) => (
               <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}> 
-                <div className={`p-3 max-w-full w-fit rounded-2xl text-white shadow-md ${msg.sender === 'user' ? 'bg-blue-500' : 'bg-gray-600 text-black'}`}> 
+                <div className={`p-3 max-w-full w-fit rounded-2xl text-white shadow-md ${msg.sender === 'user' ? 'bg-blue-500 text-white' : darkMode ? 'bg-gray-600 text-white' : 'bg-gray-600 text-black'}`}> 
                   {msg.text} 
                 </div>
               </div>
@@ -72,14 +82,14 @@ const Chatbot = () => {
           {loading && <p className='text-gray-500 '>Thinking...</p>}
         </div>
 
-        <div className='p-4 bg-white border-t flex items-center gap-3'>
-        <div className='flex-1 relative'>
+        <div className={`p-4 ${darkMode ? 'bg-gray-800' : 'bg-white'} border-t flex items-center gap-3`}>
+          <div className='flex-1 relative'>
             <input
               type='text'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              className='w-full border border-gray-300 p-4 pr-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white shadow-sm'
+              className={`w-full border border-gray-300 p-4 pr-12 rounded-2xl focus:outline-none outline-none ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-black'} shadow-sm`}
               placeholder='Send a message...'
               disabled={loading}
             />
