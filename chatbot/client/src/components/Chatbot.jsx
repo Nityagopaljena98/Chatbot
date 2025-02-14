@@ -62,7 +62,7 @@ const Chatbot = () => {
 
         <div className='flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50'>
           {messages.length === 0 ? (
-            <p className='text-center text-gray-500'>Start the conversation...</p>
+            <p className='text-center text-gray-800'>Start the conversation ...</p>
           ) : (
             messages.map((msg, index) => (
               <div key={index} className={`p-3 max-w-xs rounded-lg ${msg.sender === 'user' ? 'bg-blue-500 text-white self-end ml-auto' : 'bg-gray-300 text-black self-start'}`}>
@@ -74,15 +74,15 @@ const Chatbot = () => {
         </div>
 
         <div className='p-4 bg-white border-t flex items-center gap-2'>
-          <input
-            type='text'
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className='flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300'
-            placeholder='Ask me anything...'
-            disabled={loading}
-          />
+        <input
+              type='text'
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className='w-full border-none bg-gray-800 p-4 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none  focus:border-transparent shadow-sm transition disabled:opacity-50 rounded-tl-lg rounded-tr-lg'
+              placeholder='Message Chatbot...'
+              disabled={loading}
+            />
 
           <button onClick={startNewChat} title='New Chat' className='bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition'>
             <FaPlus />
